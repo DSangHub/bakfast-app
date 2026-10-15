@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bakfast — Returns Without the Runaround</title>
+<meta name="description" content="Skip the Post Office and drop boxes. Bakfast lets you send returns back with the driver who delivers your next package, or schedule a pickup. Fast refunds. Extra earnings for drivers.">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root {
+    --navy: #0f2744;
+    --blue: #1a4a7a;
+    --accent: #ff6b35;
+    --accent-dark: #e55a2b;
+    --light: #f7f9fc;
+    --gray: #5a6a7a;
+    --green: #2e8b57;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    color: var(--navy);
+    line-height: 1.6;
+    background: #fff;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+  header {
+    background: var(--navy);
+    color: #fff;
+    padding: 16px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  header .container { display: flex; justify-content: space-between; align-items: center; }
+  .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; }
+  .logo span { color: var(--accent); }
+  nav a { color: #fff; text-decoration: none; margin-left: 24px; font-weight: 500; font-size: 0.95rem; }
+  nav a:hover { color: var(--accent); }
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+    color: #fff;
+    padding: 80px 0 70px;
+    text-align: center;
+  }
+  .hero h1 { font-size: 2.8rem; font-weight: 800; line-height: 1.15; margin-bottom: 16px; }
+  .hero p { font-size: 1.25rem; max-width: 640px; margin: 0 auto 32px; opacity: 0.92; }
+  .btn {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    padding: 14px 32px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.05rem;
+    transition: background 0.2s;
+  }
+  .btn:hover { background: var(--accent-dark); }
+  .btn-outline {
+    background: transparent;
+    border: 2px solid #fff;
+    margin-left: 12px;
+  }
+  .btn-outline:hover { background: #fff; color: var(--navy); }
+  section { padding: 70px 0; }
+  h2 { font-size: 2.2rem; text-align: center; margin-bottom: 12px; }
+  .sub { text-align: center; color: var(--gray); max-width: 600px; margin: 0 auto 40px; font-size: 1.1rem; }
+  .problem { background: var(--light); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px; margin-top: 20px; }
+  .card {
+    background: #fff;
+    padding: 28px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+  .card h3 { margin-bottom: 10px; font-size: 1.25rem; }
+  .how { background: #fff; }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; text-align: center; }
+  .step-num {
+    width: 48px; height: 48px; background: var(--accent); color: #fff;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; margin: 0 auto 16px; font-size: 1.3rem;
+  }
+  .pricing { background: var(--light); }
+  .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 700px; margin: 0 auto; }
+  .price-card {
+    background: #fff;
+    padding: 32px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border: 2px solid transparent;
+  }
+  .price-card.featured { border-color: var(--accent); position: relative; }
+  .price-card.featured::before {
+    content: "Most Popular";
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #fff; padding: 4px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;
+  }
+  .price { font-size: 2.4rem; font-weight: 800; margin: 12px 0; }
+  .price span { font-size: 1rem; font-weight: 500; color: var(--gray); }
+  .audiences { background: #fff; }
+  .audience { margin-bottom: 36px; }
+  .audience h3 { color: var(--blue); margin-bottom: 8px; }
+  footer { background: var(--navy); color: #fff; padding: 40px 0; text-align: center; }
+  footer a { color: var(--accent); text-decoration: none; }
+  .calculator { background: var(--light); }
+  .calc-box {
+    background: #fff; max-width: 480px; margin: 0 auto; padding: 32px;
+    border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+  .calc-box label { display: block; margin: 14px 0 6px; font-weight: 600; }
+  .calc-box input {
+    width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;
+  }
+  .calc-result {
+    margin-top: 20px; padding: 16px; background: var(--light); border-radius: 8px;
+    text-align: center; font-size: 1.4rem; font-weight: 700; color: var(--green);
+  }
+  #mini-map { height: 340px; border-radius: 12px; margin-top: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+  .map-note { text-align: center; font-size: 0.9rem; color: var(--gray); margin-top: 8px; }
+  @media (max-width: 700px) {
+    .hero h1 { font-size: 2.1rem; }
+    nav { display: none; }
+    .btn-outline { margin-left: 0; margin-top: 12px; display: block; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <div class="logo">Bak<span>fast</span></div>
+    <nav>
+      <a href="#how">How It Works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#for">Who It's For</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <h1>Returns Without the Runaround</h1>
+    <p>You ordered it for convenience. Send it back the same way. Hand your return to the driver delivering your next package, or schedule a pickup. Refund the next day.</p>
+    <a href="#pricing" class="btn">Start for $19.95/mo</a>
+    <a href="bakfast-driver-map-mapbox.html" class="btn btn-outline">Try Driver Map</a>
+  </div>
+</section>
+
+<section class="problem">
+  <div class="container">
+    <h2>Online Returns Are Still a Hassle</h2>
+    <p class="sub">Driving to the Post Office, FedEx, or UPS drop box means traffic, lines, and lost time — the opposite of why you ordered online.</p>
+    <div class="grid">
+      <div class="card">
+        <h3>Time & Traffic</h3>
+        <p>Drop-offs eat evenings and weekends. You miss the next sale while waiting for your refund.</p>
+      </div>
+      <div class="card">
+        <h3>Inconvenient Locations</h3>
+        <p>Post offices, lockers, and stores aren’t always nearby or open when you need them.</p>
+      </div>
+      <div class="card">
+        <h3>Delayed Refunds</h3>
+        <p>Waiting days or weeks for processing slows your next purchase and hurts satisfaction.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="how">
+  <div class="container">
+    <h2>How Bakfast Works</h2>
+    <p class="sub">Simple for customers. Extra earnings for drivers. Better metrics for merchants.</p>
+    <div class="steps">
+      <div>
+        <div class="step-num">1</div>
+        <h3>Request a Pickup</h3>
+        <p>Schedule a pickup or hand the package to the driver delivering your next order. Premium members receive SASE bags.</p>
+      </div>
+      <div>
+        <div class="step-num">2</div>
+        <h3>Driver Scans the Tag</h3>
+        <p>The driver scans your Bakfast tag. Packages up to 25 lb. Refund transfers to your account the next day.</p>
+      </div>
+      <div>
+        <div class="step-num">3</div>
+        <h3>Buy Something Else</h3>
+        <p>Money is back fast. Don’t miss the next sale waiting on a return.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <div class="container">
+    <h2>Simple Subscription Pricing</h2>
+    <p class="sub">Max weight 25 lb per package. Drivers paid $0.90 per mile.</p>
+    <div class="price-grid">
+      <div class="price-card">
+        <h3>Basic</h3>
+        <div class="price">$19.95<span>/mo</span></div>
+        <p>5 Bakfast pickups per month</p>
+        <p style="margin-top:12px; color:var(--gray); font-size:0.95rem;">Perfect for occasional returns</p>
+      </div>
+      <div class="price-card featured">
+        <h3>Premium</h3>
+        <div class="price">$49.95<span>/mo</span></div>
+        <p>Unlimited pickups</p>
+        <p style="margin-top:12px; color:var(--gray); font-size:0.95rem;">Includes SASE bags for easy packing</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="audiences" id="for">
+  <div class="container">
+    <h2>Built for Everyone in the Loop</h2>
+    <div class="audience">
+      <h3>Customers</h3>
+      <p>Skip the drop box. Get your money back the next day after the scan. Premium accounts include SASE bags. One fraudulent or misrepresented return flags the address and delays future refunds.</p>
+    </div>
+    <div class="audience">
+      <h3>Drivers</h3>
+      <p>Add 10–15 return pickups a day for extra earnings. Create a profile linked to your existing rideshare or delivery accounts. Choose Amazon, Walmart, specific merchants, or any within a 10-mile radius. Paid by distance traveled. Use the <a href="bakfast-driver-map-mapbox.html" style="color:var(--accent); font-weight:600;">color-coded interactive map</a> of FedEx, Amazon, UPS, and member merchant return points.</p>
+    </div>
+    <div class="audience">
+      <h3>Merchants</h3>
+      <p>Better customer satisfaction scores, speedier returns, and more buy clicks once the return is off the customer’s to-do list. Premium merchants get first response for pickups. Access a verified user database. Online merchants see higher repurchase rates.</p>
+    </div>
+  </div>
+</section>
+
+<section class="calculator" id="earnings">
+  <div class="container">
+    <h2>Estimated Driver Earnings</h2>
+    <p class="sub">Paid $0.90 per mile. Typical drivers add 10–15 return pickups a day.</p>
+    <div class="calc-box">
+      <label for="miles">Total miles driven for returns</label>
+      <input type="number" id="miles" value="25" min="0" step="0.1" oninput="calcEarnings()">
+      <label for="packages">Number of packages</label>
+      <input type="number" id="packages" value="12" min="0" step="1" oninput="calcEarnings()">
+      <div class="calc-result" id="earnings-result">Estimated earnings: $22.50</div>
+      <p style="text-align:center; margin-top:12px; font-size:0.9rem; color:var(--gray);">Based on $0.90/mile. Actual pay depends on route density and accepted pickups.</p>
+    </div>
+  </div>
+</section>
+
+<section style="background:#fff; padding-top:20px;">
+  <div class="container">
+    <h2>Driver Map Preview</h2>
+    <p class="sub">Color-coded return points. Click markers in the full map to accept pickups.</p>
+    <div id="mini-map"></div>
+    <p class="map-note">Red = FedEx · Orange = Amazon · Purple = UPS · Green = Member Merchant · <a href="bakfast-driver-map-mapbox.html" style="color:var(--accent); font-weight:600;">Open full Mapbox-style map →</a></p>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p style="font-size:1.4rem; font-weight:800; margin-bottom:8px;">Bak<span style="color:var(--accent);">fast</span></p>
+    <p>Returns without the runaround.</p>
+    <p style="margin-top:20px; font-size:0.9rem; opacity:0.8;">&copy; 2026 Bakfast. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+function calcEarnings() {
+  const miles = parseFloat(document.getElementById('miles').value) || 0;
+  const packages = parseInt(document.getElementById('packages').value) || 0;
+  const earnings = (miles * 0.90).toFixed(2);
+  document.getElementById('earnings-result').textContent = `Estimated earnings: $${earnings}`;
+}
+calcEarnings();
+
+// Mini map
+const miniMap = L.map('mini-map').setView([38.58, -121.49], 12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap',
+  maxZoom: 19
+}).addTo(miniMap);
+
+const colors = { fedex:'#e74c3c', amazon:'#f39c12', ups:'#8e44ad', merchant:'#27ae60' };
+const miniPoints = [
+  {lat:38.5816, lng:-121.4944, type:'fedex'},
+  {lat:38.5720, lng:-121.4700, type:'amazon'},
+  {lat:38.6000, lng:-121.5100, type:'ups'},
+  {lat:38.5650, lng:-121.5200, type:'merchant'},
+  {lat:38.5900, lng:-121.4600, type:'amazon'},
+  {lat:38.6100, lng:-121.4800, type:'merchant'},
+  {lat:38.5750, lng:-121.5300, type:'ups'},
+  {lat:38.5850, lng:-121.4500, type:'merchant'}
+];
+miniPoints.forEach(p => {
+  const icon = L.divIcon({
+    html: `<div style="background:${colors[p.type]};width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div>`,
+    iconSize:[16,16], iconAnchor:[8,8]
+  });
+  L.marker([p.lat, p.lng], {icon}).addTo(miniMap);
+});
+</script>
+</body>
+</html>
