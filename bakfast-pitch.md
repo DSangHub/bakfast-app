@@ -25,7 +25,8 @@ Customers hand returns to the driver delivering their next package (or schedule 
 - Pick up 10–15 packages a day.
 - Create a profile and link existing rideshare or home-delivery accounts for verification.
 - Choose specific merchants (Amazon, Walmart, etc.) or any pickup within a 10-mile radius.
-- Color-coded map shows FedEx, Amazon, UPS warehouses, and member merchant return points — click to accept.
+- Color-coded map shows FedEx, Amazon, **UPS warehouses**, and member merchant return points — click to accept.
+- Deliver returns to UPS (UPS accepts Amazon and many other retailer returns), then get paid by distance.
 - Flexible side income using routes you already run.
 
 ---
@@ -42,7 +43,7 @@ Customers hand returns to the driver delivering their next package (or schedule 
 
 ## How It Works (3 Steps)
 1. Customer requests pickup or hands package to next delivery driver (Premium members use SASE bags).
-2. Driver scans the Bakfast tag (package ≤ 25 lb).
+2. Driver scans the Bakfast tag (package ≤ 25 lb) and delivers the return to a UPS drop-off (UPS accepts Amazon and other retailer returns) or other designated hub.
 3. Refund transfers to the customer’s account the next day (subject to fraud checks).
 
 ---
