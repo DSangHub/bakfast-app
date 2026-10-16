@@ -18,6 +18,13 @@ Customers hand returns to the driver delivering their next package (or schedule 
 - Basic: $19.95/month for 5 pickups  
 - Premium: $49.95/month unlimited + SASE bags
 
+## Customer Package Assurance
+- Scan-to-scan protection while the package is with the Bakfast driver.
+- Up to **$500 max payout** for loss or damage (simple limit for most returns).
+- Verified drivers (linked to existing rideshare/delivery accounts).
+- Fast claims process.
+- Built to give customers confidence to sign up instead of driving to a drop box.
+
 ---
 
 ## For Drivers
